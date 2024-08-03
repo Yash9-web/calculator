@@ -1,73 +1,60 @@
-let display = document.getElementById('display');
-let currentOperation = null;
-let firstOperand = null;
+// script.js
+let num1 = document.getElementById('num1');
+let operator = document.getElementById('operator');
+let num2 = document.getElementById('num2');
+let calculateButton = document.getElementById('calculate');
+let clearButton = document.getElementById('clear');
+let resultDiv = document.getElementById('result');
+let historyDiv = document.getElementById('history');
 
-function appendNumber(number) {
-    if (number === '.' && display.value.includes('.')) return;
-    display.value += number;
-    console.log('Display updated:', display.value);
-}
+let history = [];
 
-function setOperation(operator) {
-    if (display.value === '') return;
-    firstOperand = parseFloat(display.value);
-    currentOperation = operator;
-    display.value = '';
-    console.log('Operation set:', operator);
-}
-
-function clearDisplay() {
-    display.value = '';
-    currentOperation = null;
-    firstOperand = null;
-    console.log('Display cleared');
-}
+calculateButton.addEventListener('click', calculate);
+clearButton.addEventListener('click', clear);
 
 function calculate() {
-    if (currentOperation === null || display.value === '') return;
-    let secondOperand = parseFloat(display.value);
-    let result;
+    let num1Value = parseFloat(num1.value);
+    let num2Value = parseFloat(num2.value);
+    let operatorValue = operator.value;
 
-    switch (currentOperation) {
+    if (isNaN(num1Value) || isNaN(num2Value)) {
+        resultDiv.innerText = 'Invalid input';
+        return;
+    }
+
+    let result;
+    switch (operatorValue) {
         case '+':
-            result = firstOperand + secondOperand;
+            result = num1Value + num2Value;
             break;
         case '-':
-            result = firstOperand - secondOperand;
+            result = num1Value - num2Value;
             break;
         case '*':
-            result = firstOperand * secondOperand;
+            result = num1Value * num2Value;
             break;
         case '/':
-            result = firstOperand / secondOperand;
+            if (num2Value === 0) {
+                resultDiv.innerText = 'Cannot divide by zero';
+                return;
+            }
+            result = num1Value / num2Value;
             break;
         default:
+            resultDiv.innerText = 'Invalid operator';
             return;
     }
 
-    display.value = result;
-    currentOperation = null;
-    firstOperand = null;
-    console.log('Calculation result:', result);
+    resultDiv.innerText = `Result: ${result}`;
+    history.push(`${num1Value} ${operatorValue} ${num2Value} = ${result}`);
+    historyDiv.innerText = history.join('\n');
 }
 
-// Keyboard input support
-document.addEventListener('keydown', function(event) {
-    const key = event.key;
-
-    if (!isNaN(key) || key === '.') {
-        appendNumber(key);
-    } else if (['+', '-', '*', '/'].includes(key)) {
-        setOperation(key);
-    } else if (key === 'Enter') {
-        calculate();
-    } else if (key === 'Escape') {
-        clearDisplay();
-    } else if (key === 'Backspace') {
-        display.value = display.value.slice(0, -1);
-        console.log('Backspace pressed:', display.value);
-    }
-});
-
-// Set focus to the display for key input
-display.focus();
+function clear() {
+    num1.value = '';
+    num2.value = '';
+    operator.value = '+';
+    resultDiv.innerText = '';
+    history = [];
+    historyDiv.innerText = '';
+}
