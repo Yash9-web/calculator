@@ -5,6 +5,7 @@ let firstOperand = null;
 function appendNumber(number) {
     if (number === '.' && display.value.includes('.')) return;
     display.value += number;
+    console.log('Display updated:', display.value);
 }
 
 function setOperation(operator) {
@@ -12,12 +13,14 @@ function setOperation(operator) {
     firstOperand = parseFloat(display.value);
     currentOperation = operator;
     display.value = '';
+    console.log('Operation set:', operator);
 }
 
 function clearDisplay() {
     display.value = '';
     currentOperation = null;
     firstOperand = null;
+    console.log('Display cleared');
 }
 
 function calculate() {
@@ -38,11 +41,14 @@ function calculate() {
         case '/':
             result = firstOperand / secondOperand;
             break;
+        default:
+            return;
     }
 
     display.value = result;
     currentOperation = null;
     firstOperand = null;
+    console.log('Calculation result:', result);
 }
 
 // Keyboard input support
@@ -59,8 +65,9 @@ document.addEventListener('keydown', function(event) {
         clearDisplay();
     } else if (key === 'Backspace') {
         display.value = display.value.slice(0, -1);
+        console.log('Backspace pressed:', display.value);
     }
 });
 
 // Set focus to the display for key input
-document.getElementById('display').focus();
+display.focus();
