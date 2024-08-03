@@ -1,66 +1,28 @@
-let display = document.getElementById('display');
-let currentOperation = null;
-let firstOperand = null;
+// calculator.js
 
-function appendNumber(number) {
-    if (number === '.' && display.value.includes('.')) return;
-    display.value += number;
-}
-
-function setOperation(operator) {
-    if (display.value === '') return;
-    firstOperand = parseFloat(display.value);
-    currentOperation = operator;
-    display.value = '';
-}
-
+// Function to clear the display
 function clearDisplay() {
-    display.value = '';
-    currentOperation = null;
-    firstOperand = null;
+    document.getElementById('display').value = '';
 }
 
+// Function to remove the last character from the display
+function backspace() {
+    let display = document.getElementById('display');
+    display.value = display.value.slice(0, -1);
+}
+
+// Function to append a number or operator to the display
+function appendToDisplay(value) {
+    let display = document.getElementById('display');
+    display.value += value;
+}
+
+// Function to evaluate the expression in the display
 function calculate() {
-    if (currentOperation === null || display.value === '') return;
-    let secondOperand = parseFloat(display.value);
-    let result;
-
-    switch (currentOperation) {
-        case '+':
-            result = firstOperand + secondOperand;
-            break;
-        case '-':
-            result = firstOperand - secondOperand;
-            break;
-        case '*':
-            result = firstOperand * secondOperand;
-            break;
-        case '/':
-            result = firstOperand / secondOperand;
-            break;
+    let display = document.getElementById('display');
+    try {
+        display.value = eval(display.value);
+    } catch (e) {
+        display.value = 'Error';
     }
-
-    display.value = result;
-    currentOperation = null;
-    firstOperand = null;
 }
-
-// Keyboard input support
-document.addEventListener('keydown', function(event) {
-    const key = event.key;
-
-    if (!isNaN(key) || key === '.') {
-        appendNumber(key);
-    } else if (['+', '-', '*', '/'].includes(key)) {
-        setOperation(key);
-    } else if (key === 'Enter') {
-        calculate();
-    } else if (key === 'Escape') {
-        clearDisplay();
-    } else if (key === 'Backspace') {
-        display.value = display.value.slice(0, -1);
-    }
-});
-
-// Set focus to the display for key input
-document.getElementById('display').focus();
